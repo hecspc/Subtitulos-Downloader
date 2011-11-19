@@ -44,5 +44,51 @@ describe SubtitulosDownloader::SubtitulosEs do
       subs.should == true
     end
 
+    it 'should fetch italian language' do
+      episode = SubtitulosDownloader::ShowEpisode.new('fringe', 3, 7)
+      subtitle = @provider.fetch(episode, 'italian')
+      subtitle.language.should == 'italian'
+      subtitle.show_episode.should == episode
+      subs = (subtitle.subtitles =~ /Quello che conta e' che sono nei guai./) > 1
+      subs.should == true
+    end
+  end
+
+  context "Rasing Exceptions" do 
+    before(:all) do
+      @provider = SubtitulosDownloader::SubtitulosEs.new()
+    end
+
+    it 'should raise a not show found exception' do
+      episode = SubtitulosDownloader::ShowEpisode.new('fake show', 2, 4)
+      lambda{@provider.fetch(episode, 'es')}.should raise_error(SubtitulosDownloader::ShowNotFound)
+    end
+
+    it 'should raise more than one show exception' do
+      episode = SubtitulosDownloader::ShowEpisode.new('the', 3, 4)
+      lambda{@provider.fetch(episode, 'es')}.should raise_error(SubtitulosDownloader::MoreThanOneShow)
+    end
+
+    it 'should raise season not found exception' do
+      episode = SubtitulosDownloader::ShowEpisode.new('the simpsons', 3, 4)
+      lambda{@provider.fetch(episode, 'es')}.should raise_error(SubtitulosDownloader::SeasonNotFound)
+    end
+
+    it 'should raise episode not found exception' do
+      episode = SubtitulosDownloader::ShowEpisode.new('the simpsons', 22, 34)
+      lambda{@provider.fetch(episode, 'es')}.should raise_error(SubtitulosDownloader::EpisodeNotFound)
+    end
+
+    it 'should raise episode not translated exception' do
+      episode = SubtitulosDownloader::ShowEpisode.new('the simpsons', 20, 1)
+      lambda{@provider.fetch(episode, 'galego')}.should raise_error(SubtitulosDownloader::TranslationNotFinished)
+    end
+
+     it 'should raise language not found exception' do
+      episode = SubtitulosDownloader::ShowEpisode.new('the simpsons', 20, 1)
+      lambda{@provider.fetch(episode, 'esperanto')}.should raise_error(SubtitulosDownloader::LanguageNotFound)
+    end
+
+
   end
 end

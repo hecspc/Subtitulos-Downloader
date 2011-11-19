@@ -39,6 +39,17 @@ module SubtitulosDownloader
       end
     end
 
+    def subtitle_language(lang)
+      subs = nil
+      @subtitles.each do |sub|
+        if sub.language == lang
+          return sub
+          break
+        end
+      end
+      return nil
+    end
+
     def full_name
       episode_str = "%02d" % @episode
       if @episode_name

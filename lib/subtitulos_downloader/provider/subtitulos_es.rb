@@ -91,8 +91,8 @@ module SubtitulosDownloader
           shows << { :show_episode => show_episode, :url => show_url, :id_show => show_url.split('/show/')[1].to_i }
         end
       end
-      raise ShowNotFound, "[#{@provider_name}] #{show.show_name} not found" if shows.count == 0
-      raise MoreThanOneShow, "[#{@provider_name}] Found #{shows.count} for #{show.show_name}" if shows.count > 1
+      raise ShowNotFound, "[#{@provider_name}] #{show_episode.show_name} not found" if shows.count == 0
+      raise MoreThanOneShow, "[#{@provider_name}] Found #{shows.count} for #{show_episode.show_name}" if shows.count > 1
       shows
     end
 
@@ -103,7 +103,12 @@ module SubtitulosDownloader
       open(season_url,
         "User-Agent" => @user_agent,
         "Referer" =>"#{@base_uri}" ) { |f|
-          season_doc = Hpricot(f.read)
+          
+          cont = f.read
+          raise SeasonNotFound, "[#{@provider_name}] Season for #{show_episode.full_name} not found" if cont == ''
+
+          season_doc = Hpricot(cont)
+
           season_doc.search('table').each do |episode_table|
             title = (episode_table/"tr/td[@colspan='5']/a").inner_html.force_encoding('utf-8')
             episode_str = "%02d" % show_episode.episode
