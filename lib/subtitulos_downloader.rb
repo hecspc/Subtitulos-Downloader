@@ -1,4 +1,11 @@
 require "subtitulos_downloader/version"
+require "subtitulos_downloader/subtitle"
+require "subtitulos_downloader/show_episode"
+require "subtitulos_downloader/exception"
+require "subtitulos_downloader/provider/provider"
+Dir["#{File.dirname(__FILE__)}/subtitulos_downloader/provider/*.rb"].each {|f| require f}
+require "subtitulos_downloader/notifier/notifier"
+Dir["#{File.dirname(__FILE__)}/subtitulos_downloader/notifier/*.rb"].each {|f| require f}
 
 module SubtitulosDownloader
 

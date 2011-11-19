@@ -18,10 +18,8 @@ module SubtitulosDownloader
   end
 
   class TranslationNotFinished < SDException
+  end
 
   class LanguageNotFound < SDException
   end
-
-
-
 end

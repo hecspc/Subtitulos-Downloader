@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'hpricot'
 require "version"
 
@@ -5,28 +6,38 @@ module SubtitulosDownloader
 
   class SubtitulosEs < Provider
 
-    @base_uri = "http://www.subtitulos.es"
-    @provider_name = "subtitulos.es"
+    def init
+      @base_uri = "http://www.subtitulos.es"
+      @provider_name = "subtitulos.es"  
+    end
+    
 
     def fetch(show_episode, language)
+
       get_shows_page unless @shows_doc
 
       shows = search_show show_episode
       
-      show_sub = show_episode.first
+      show_sub = shows.first
 
       episode_subs_table = get_episode_table show_episode, show_sub
       
-      lang = "English" if language == 'en'
-      lang = "España" if language == 'es'
+      case language
+        when 'en'
+          lang = 'English'
+        when 'es'
+          lang = 'España'
+        else
+          lang = language
+      end
 
       begin
         subs = get_subtitles(lang, episode_subs_table, show_sub)
         subtitle = Subtitle.new subs, language, show_episode
       rescue SDException => e
-        if language == es
+        if language == 'es'
           if lang == 'España' 
-            lang == 'Latinoamérica'
+            lang = 'Latinoamérica'
             retry
           elsif lang == 'Latinoamérica'
             lang = 'Español'
@@ -54,10 +65,9 @@ module SubtitulosDownloader
               # puts "Translation for language #{language} completed"
               subtitle_a = lang.parent.search("a").at(0)
               subtitle_url = subtitle_a.attributes['href']
-              
               # puts "Fetching #{language} subtitle file"
               open(subtitle_url, 
-                "SubtitulosDownloader #{VERSION}/Ruby/#{RUBY_VESION}",
+                "User-Agent" => @user_agent,
                 "Referer" => "#{@base_uri}/show/#{show_sub[:id_show]}") { |f|
                   # Save the response body
                   subs= f.read
@@ -88,22 +98,28 @@ module SubtitulosDownloader
 
     def get_episode_table(show_episode, show_sub)
 
-      season_url = "#{@base_uri}/ajax_loadShow.php?show=#{show_sub[:id_show]}&season=#{show.season}"
-
+      season_url = "#{@base_uri}/ajax_loadShow.php?show=#{show_sub[:id_show]}&season=#{show_episode.season}"
+      ep_t = nil
       open(season_url,
         "User-Agent" => @user_agent,
         "Referer" =>"#{@base_uri}" ) { |f|
           season_doc = Hpricot(f.read)
           season_doc.search('table').each do |episode_table|
-            title = (episode/"tr/td[@colspan='5']/a").inner_html.force_encoding('utf-8')
-            episode_number = "#{show_episode.season}x#{show_episode.episode}"
+            title = (episode_table/"tr/td[@colspan='5']/a").inner_html.force_encoding('utf-8')
+            episode_str = "%02d" % show_episode.episode
+            episode_number = "#{show_episode.season}x#{episode_str}"
             if title =~ /#{episode_number}/i
-              return episode_table
+              ep_t = episode_table
+              break
             end
           end
       }
 
-      raise EpisodeNotFound, "[#{@provider_name}] Episode #{show.full_name} not found"
+      if ep_t
+        return ep_t
+      else
+        raise EpisodeNotFound, "[#{@provider_name}] Episode #{show_episode.full_name} not found"
+      end
 
     end
 

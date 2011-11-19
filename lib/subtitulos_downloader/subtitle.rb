@@ -13,7 +13,15 @@ module SubtitulosDownloader
 
 
     def save_path
-      "#{@show_episode.episode_path}-#{@language}.srt"
+      case @language
+        when 'es'
+          lang = 'Spanish'
+        when 'en'
+          lang = 'English'
+        else
+          lang = @language
+      end
+      "#{@show_episode.episode_path}-#{lang}.srt"
     end
 
   end

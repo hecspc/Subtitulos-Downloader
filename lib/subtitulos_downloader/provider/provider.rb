@@ -1,10 +1,16 @@
+require 'version'
 module SubtitulosDownloader
   class Provider
 
-    def initialize(options)
+    def initialize(options={})
       @options = options
+      @user_agent = "SubtitulosDownloader/#{VERSION}"
+      init
+    end
+
+    def init(options)
+      # to be override
       @base_uri = ""
-      @user_agent = "SubtitulosDownloader #{VERSION}/Ruby/#{RUBY_VESION}"
       @provider_name =''
     end
 

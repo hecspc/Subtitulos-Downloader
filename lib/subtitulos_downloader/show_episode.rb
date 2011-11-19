@@ -7,7 +7,7 @@ module SubtitulosDownloader
     attr_accessor :show_name, :season, :episode, :episode_name
     attr_accessor :tvdb_episode, :tvdb_show, :subtitles
 
-    def initialize(show_name, season, episode, opts = {})
+    def initialize(show_name, season, episode, options = {})
       
       @show_name = show_name
       @season = season.to_i
@@ -60,7 +60,7 @@ module SubtitulosDownloader
       "#{@show_name}/Season #{@season}/#{self.full_name}"
     end
 
-    def self.parse_file_name(file_name)
+    def self.new_from_file_name(file_name, options={})
       # House.S04E13.HDTV.XviD-XOR.avi
       # my.name.is.earl.s03e07-e08.hdtv.xvid-xor.[VTV].avi
       # My_Name_Is_Earl.3x17.No_Heads_And_A_Duffel_Bag.HDTV_XviD-FoV.[VTV].avi
@@ -82,13 +82,13 @@ module SubtitulosDownloader
         )
         )\]?\s?.*$/ix
       
-      if match = filename.to_s.match(re)
+      if match = file_name.to_s.match(re)
         series  = match[1].gsub(/[\._]/, ' ').strip.gsub(/\b\w/){$&.upcase}
         season  = (match[2] || match[5]).to_i
         episode = (match[3] || match[6]).to_i
         episode = (episode)..(match[4].to_i) unless match[4].nil?
         
-        show_episode = ShowEpisode.new(series, season, episode) 
+        show_episode = ShowEpisode.new(series, season, episode, options) 
       else
         nil
       end
