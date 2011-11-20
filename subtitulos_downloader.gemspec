@@ -24,6 +24,4 @@ Gem::Specification.new do |s|
   # s.add_runtime_dependency "rest-client"
   s.add_dependency("tvdb", ">= 0.1.0")
   s.add_dependency("hpricot", ">= 0.8.4")
-  s.add_dependency("httparty", ">= 0.8.1")
-  s.add_dependency("prowler", ">= 1.3.1")
 end
