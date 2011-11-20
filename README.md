@@ -9,8 +9,8 @@ It allows to download subtitles for multiple languages supported by the provider
 
 It also supports TVdb to fetch the episode name and the real name for the show given a season and an episode number.
 
-It saves the file(s) to a given path.Right now, only supported format name is:
-<Show Name/Season #/Show Name - SxEE - Episode Name-Language.srt>
+It saves the file(s) to a given path.Right now, only supported format name is: 
+<code>Show Name/Season #/Show Name - SxEE - Episode Name-Language.srt</code>
 
 
 ### Providers
@@ -21,14 +21,14 @@ The providers currently developed are:
 Installation
 ------------
 To install the gem
-
+<pre>
   gem install subtitulos_downloader
-
+</pre>
 
 Usage
 -----
 For using this gem all you have to do is
-  
+<pre>
   require 'subtitulos_downloader'
   sub_downloader = SubtitulosDownloader::SubtitulosDownloader({ 
     :provider = SubtitulosDownloader::SubtitlosEs,
@@ -62,7 +62,7 @@ For using this gem all you have to do is
   subtitles = episode.subtitles.first
   subtitles.language # Language of subtitles
   subtitles.subtitles # String containing the subtitles
-
+</pre>
 
 Contact
 ------
