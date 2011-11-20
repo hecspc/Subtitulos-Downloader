@@ -4,16 +4,14 @@ require "subtitulos_downloader/show_episode"
 require "subtitulos_downloader/exception"
 require "subtitulos_downloader/provider/provider"
 Dir["#{File.dirname(__FILE__)}/subtitulos_downloader/provider/*.rb"].each {|f| require f}
-require "subtitulos_downloader/notifier/notifier"
-Dir["#{File.dirname(__FILE__)}/subtitulos_downloader/notifier/*.rb"].each {|f| require f}
+
 
 module SubtitulosDownloader
 
   class SubtitulosDownloader
     def initialize(opts = {})
       options = {
-        :provider => SubtitulosEs,
-        :tvdb_api_key => 'XXXXXXXXXXXXXXX',
+        :provider => SubtitulosEs
       }.merge!(opts)
       
       @provider = options[:provider].new(options)
