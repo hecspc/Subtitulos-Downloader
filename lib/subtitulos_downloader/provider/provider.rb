@@ -1,4 +1,5 @@
 require 'version'
+
 module SubtitulosDownloader
   class Provider
 
