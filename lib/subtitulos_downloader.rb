@@ -13,7 +13,7 @@ module SubtitulosDownloader
     def initialize(opts = {})
       options = {
         :provider => SubtitulosEs,
-        :tvdb_api_key => 'EF41E54C744526F7'
+        :tvdb_api_key => 'XXXXXXXXXXXXXXX',
       }.merge!(opts)
       
       @provider = options[:provider].new(options)
