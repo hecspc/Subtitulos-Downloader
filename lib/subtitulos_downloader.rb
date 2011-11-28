@@ -1,5 +1,6 @@
 require "subtitulos_downloader/version"
 require "subtitulos_downloader/subtitle"
+require "subtitulos_downloader/video"
 require "subtitulos_downloader/show_episode"
 require "subtitulos_downloader/exception"
 require "subtitulos_downloader/provider/provider"

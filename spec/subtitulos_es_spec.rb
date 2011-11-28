@@ -15,7 +15,7 @@ describe SubtitulosDownloader::SubtitulosEs do
     it 'should fetch spanish subtitle' do
       subtitle = @provider.fetch(@ep, 'es')
       subtitle.language.should == 'es'
-      subtitle.show_episode.should == @ep
+      subtitle.video.should == @ep
       subs = (subtitle.subtitles =~ /Ahora solo tengo que averiguar/) > 1
       subs.should == true
     end
@@ -23,7 +23,7 @@ describe SubtitulosDownloader::SubtitulosEs do
     it 'should fetch english subtitle' do
       subtitle = @provider.fetch(@ep, 'en')
       subtitle.language.should == 'en'
-      subtitle.show_episode.should == @ep
+      subtitle.video.should == @ep
       subs = (subtitle.subtitles =~ /10-4. Copy location./) > 1
       subs.should == true
     end
@@ -31,7 +31,7 @@ describe SubtitulosDownloader::SubtitulosEs do
     it 'should fetch latinoamerican instead of spanish subtitles' do
       subtitle = @provider.fetch(@simpsons, 'es')
       subtitle.language.should == 'es'
-      subtitle.show_episode.should == @simpsons
+      subtitle.video.should == @simpsons
       subs = (subtitle.subtitles =~ /Tenemos cubos amarillos, cubos anaranjados/) > 1
       subs.should == true
     end
@@ -39,7 +39,7 @@ describe SubtitulosDownloader::SubtitulosEs do
     it 'should fetch español instead of spanish subtitles' do
       subtitle = @provider.fetch(@simpsons2, 'es')
       subtitle.language.should == 'es'
-      subtitle.show_episode.should == @simpsons2
+      subtitle.video.should == @simpsons2
       subs = (subtitle.subtitles =~ /me gusta la forma de pensar de ustedes los italianos/) > 1
       subs.should == true
     end
@@ -48,7 +48,7 @@ describe SubtitulosDownloader::SubtitulosEs do
       episode = SubtitulosDownloader::ShowEpisode.new('fringe', 3, 7)
       subtitle = @provider.fetch(episode, 'italian')
       subtitle.language.should == 'italian'
-      subtitle.show_episode.should == episode
+      subtitle.video.should == episode
       subs = (subtitle.subtitles =~ /Quello che conta e' che sono nei guai./) > 1
       subs.should == true
     end

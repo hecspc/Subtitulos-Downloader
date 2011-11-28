@@ -2,26 +2,18 @@ module SubtitulosDownloader
 
   class Subtitle
 
-    attr_accessor :subtitles, :language, :show_episode
+    attr_accessor :subtitles, :language, :video
 
-    def initialize(subs, language, show_episode)
+    def initialize(subs, language, video)
       @subtitles = subs
       @language = language
-      @show_episode = show_episode
-      @show_episode.subtitles << self
+      @video = video
+      @video.subtitles << self
     end
 
 
     def save_path
-      case @language
-        when 'es'
-          lang = 'Spanish'
-        when 'en'
-          lang = 'English'
-        else
-          lang = @language
-      end
-      "#{@show_episode.episode_path}-#{lang}.srt"
+      "#{@video.full_path}.#{@language}.srt"
     end
 
   end

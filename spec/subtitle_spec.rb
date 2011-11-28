@@ -12,18 +12,18 @@ describe SubtitulosDownloader::Subtitle do
       sub = SubtitulosDownloader::Subtitle.new('subs', 'en', @ep)
       sub.subtitles.should == 'subs'
       sub.language.should == 'en'
-      sub.show_episode.should == @ep
+      sub.video.should == @ep
       @ep.subtitles.count.should == 1
       @ep.subtitles.first.should == sub
     end
 
     it 'should show the path to save' do
       sub = SubtitulosDownloader::Subtitle.new('subs', 'en', @ep)
-      sub.save_path.should == 'Fringe/Season 4/Fringe - 4x07 - Wallflower-English.srt'
+      sub.save_path.should == 'Fringe/Season 4/Fringe - 4x07 - Wallflower.en.srt'
       sub = SubtitulosDownloader::Subtitle.new('subs', 'es', @ep)
-      sub.save_path.should == 'Fringe/Season 4/Fringe - 4x07 - Wallflower-Spanish.srt'
+      sub.save_path.should == 'Fringe/Season 4/Fringe - 4x07 - Wallflower.es.srt'
       sub = SubtitulosDownloader::Subtitle.new('subs', 'ca', @ep)
-      sub.save_path.should == 'Fringe/Season 4/Fringe - 4x07 - Wallflower-ca.srt'
+      sub.save_path.should == 'Fringe/Season 4/Fringe - 4x07 - Wallflower.ca.srt'
     end
 
   end
