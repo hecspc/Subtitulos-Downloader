@@ -57,31 +57,37 @@ module SubtitulosDownloader
 
     def get_subtitles(language, episode_table, show_sub)
       @provider_link = (episode_table/"td.NewsTitle/a").first.attributes['href']
+      translation_unfinished = false
       (episode_table/"tr/td.language").each do |lang|
         language_sub = lang.inner_html.strip.force_encoding('utf-8')
         if language_sub =~ /#{language}/i
-            # puts "Language #{language} found"
-            if not lang.next_sibling.inner_html =~ /[0-9]+\.?[0-9]*% Completado/i
-              # puts "Translation for language #{language} completed"
-              subtitle_a = lang.parent.search("a").at(0)
-              subtitle_url = subtitle_a.attributes['href']
-              # puts "Fetching #{language} subtitle file"
-              @provider_language = language_sub
-              @direct_link = subtitle_url
-              # @provider_link = "#{@base_uri}/show/#{show_sub[:id_show]}"
-              open(subtitle_url, 
-                "User-Agent" => @user_agent,
-                "Referer" => "#{@base_uri}/show/#{show_sub[:id_show]}") { |f|
-                  # Save the response body
-                  subs= f.read
-                  return subs
-              }
-            else
-              raise TranslationNotFinished, "[#{@provider_name}] #{language} translation not finished for #{show_sub[:show_episode].full_name}"              
-            end
+          # puts "Language #{language} found"
+          if not lang.next_sibling.inner_html =~ /[0-9]+\.?[0-9]*% Completado/i
+            # puts "Translation for language #{language} completed"
+            subtitle_a = lang.parent.search("a").at(0)
+            subtitle_url = subtitle_a.attributes['href']
+            # puts "Fetching #{language} subtitle file"
+            @provider_language = language_sub
+            @direct_link = subtitle_url
+            # @provider_link = "#{@base_uri}/show/#{show_sub[:id_show]}"
+            translation_unfinished = false              
+            open(subtitle_url, 
+              "User-Agent" => @user_agent,
+              "Referer" => "#{@base_uri}/show/#{show_sub[:id_show]}") { |f|
+                # Save the response body
+                subs= f.read
+                return subs
+            }
+          else
+            translation_unfinished = true              
+          end
         end
       end
-      raise LanguageNotFound, "[#{@provider_name}] #{language} not found for #{show_sub[:show_episode].full_name}"
+      if translation_unfinished
+        raise TranslationNotFinished, "[#{@provider_name}] #{language} translation not finished for #{show_sub[:show_episode].full_name}" 
+      else
+        raise LanguageNotFound, "[#{@provider_name}] #{language} not found for #{show_sub[:show_episode].full_name}"
+      end
     end
 
 
@@ -98,6 +104,7 @@ module SubtitulosDownloader
         show_url = show_subs.attributes['href']
         show = { :show_episode => show_episode, :url => show_url, :id_show => show_url.split('/show/')[1].to_i }
         if (show_name == show_episode.show_name)
+          shows = []
           shows << show
           break
         elsif show_name =~ /^#{show_episode.show_name}/i and (show_name != 'Scrubs Interns' and show_name != 'true blood minisodes')

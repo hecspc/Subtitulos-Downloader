@@ -52,6 +52,14 @@ describe SubtitulosDownloader::SubtitulosEs do
       subs = (subtitle.subtitles =~ /Quello che conta e' che sono nei guai./) > 1
       subs.should == true
     end
+
+    it 'should fetch second español if first is not completed' do
+      episode = SubtitulosDownloader::ShowEpisode.new('Hustle', 7, 3)
+      subtitle = @provider.fetch(episode, 'es')
+      subtitle.language.should == 'es'
+      subtitle.show_episode.should == episode
+      subs = (subtitle.subtitles =~ /el reverendo R.G. Wendell/) > 1
+    end
   end
 
   context "Rasing Exceptions" do 
