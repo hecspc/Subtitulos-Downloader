@@ -9,7 +9,19 @@ describe SubtitulosDownloader::SubtitulosEs do
       @ep = SubtitulosDownloader::ShowEpisode.new_from_file_name("Fringe.S04E07.HDTV.XviD-LOL.avi.avi")
       @simpsons = SubtitulosDownloader::ShowEpisode.new_from_file_name("The Simpsons - 20x05 - Dangerous Curves")
       @simpsons2 = SubtitulosDownloader::ShowEpisode.new_from_file_name("The Simpsons - 20x07 - Mypods and Boomsticks")
+      @breaking_bad = SubtitulosDownloader::ShowEpisode.new_from_file_name("Breaking Bad - 5x07 - Say My Name")
       @provider = SubtitulosDownloader::SubtitulosEs.new()
+
+    end
+
+    it 'should fetch number of translators' do
+      subtitle = @provider.fetch(@breaking_bad, 'es')
+      subtitle.translators.should == 30
+    end
+
+    it 'should fetch -1 for translators' do
+      subtitle = @provider.fetch(@breaking_bad, 'en')
+      subtitle.translators.should == -1
     end
 
     it 'should fetch spanish subtitle' do
@@ -60,6 +72,7 @@ describe SubtitulosDownloader::SubtitulosEs do
       subtitle.show_episode.should == episode
       subs = (subtitle.subtitles =~ /el reverendo R.G. Wendell/) > 1
     end
+
   end
 
   context "Rasing Exceptions" do 

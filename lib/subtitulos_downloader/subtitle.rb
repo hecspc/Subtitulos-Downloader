@@ -2,9 +2,9 @@ module SubtitulosDownloader
 
   class Subtitle
 
-    attr_accessor :subtitles, :language, :show_episode, :direct_link, :provider, :provider_link, :provider_language
+    attr_accessor :subtitles, :translators, :language, :show_episode, :direct_link, :provider, :provider_link, :provider_language
 
-    def initialize(subs, language, show_episode, direct_link, provider_link, provider, provider_language)
+    def initialize(subs, language, show_episode, translators, direct_link, provider_link, provider, provider_language)
       @subtitles = subs
       @language = language
       @show_episode = show_episode
@@ -12,6 +12,7 @@ module SubtitulosDownloader
       @provider_link = provider_link
       @direct_link = direct_link
       @provider = provider
+      @translators = translators
       @provider_language = provider_language
     end
 

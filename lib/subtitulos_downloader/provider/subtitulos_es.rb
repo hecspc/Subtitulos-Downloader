@@ -32,7 +32,8 @@ module SubtitulosDownloader
 
       begin
         subs = get_subtitles(lang, episode_subs_table, show_sub)
-        subtitle = Subtitle.new subs, language, show_episode, @direct_link, @provider_link, @provider_name, @provider_language
+        translators = get_translators(show_sub)
+        subtitle = Subtitle.new subs, language, show_episode, @translators, @direct_link, @provider_link, @provider_name, @provider_language
       rescue SDException => e
         if language == 'es'
           if lang == 'España' 
@@ -55,8 +56,39 @@ module SubtitulosDownloader
 
     protected
 
+    def get_translators(show_sub)
+      open(@provider_link,
+        "User-Agent" => @user_agent,
+        "Referer" => "#{@base_uri}/show/#{show_sub[:id_show]}" ) { |f|
+          
+        cont = f.read
+
+        ep_doc = Hpricot(cont)
+        split = @direct_link.split('/')
+        sub_id = [split.pop, split.pop].reverse.join('/')
+        ep_doc.search('span.descargar').each do |green|
+          a = green.search('a').at(0)
+          if a and a.attributes['href'] == @direct_link 
+            translated = green.next_sibling.next_sibling.next_sibling
+            @translators = translated.search('a').count
+            return @translators
+            
+          end
+          # title = (episode_table/"tr/td[@colspan='5']/a").inner_html.force_encoding('utf-8')
+          # episode_str = "%02d" % show_episode.episode
+          # episode_number = "#{show_episode.season}x#{episode_str}"
+          # if title =~ /#{episode_number}/i
+          #   ep_t = episode_table
+          #   break
+          # end
+        end
+        @translators = -1
+      }
+    end
+
     def get_subtitles(language, episode_table, show_sub)
       @provider_link = (episode_table/"td.NewsTitle/a").first.attributes['href']
+      
       translation_unfinished = false
       (episode_table/"tr/td.language").each do |lang|
         language_sub = lang.inner_html.strip.force_encoding('utf-8')

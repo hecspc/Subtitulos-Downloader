@@ -33,7 +33,7 @@ describe SubtitulosDownloader::ShowEpisode do
 
     it 'should show the subtitle given a language' do
       episode = SubtitulosDownloader::ShowEpisode.new('fake show', 3, 3)
-      subtitle = SubtitulosDownloader::Subtitle.new('subs', 'es', episode, 'direct_link', 'provider_link', 'provider', 'provider_language')
+      subtitle = SubtitulosDownloader::Subtitle.new('subs', 'es', episode, 10, 'direct_link', 'provider_link', 'provider', 'provider_language')
       sub = episode.subtitle_language 'es'
       sub.should == subtitle
       sub.subtitles.should =='subs'
