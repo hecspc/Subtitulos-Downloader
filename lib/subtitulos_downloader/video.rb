@@ -2,7 +2,7 @@ module SubtitulosDownloader
 
   class Video 
 
-    attr_accessor :subtitles
+    attr_accessor :subtitles, :name
 
     def initialize(name, options = {})
       @subtitles = []
@@ -30,6 +30,11 @@ module SubtitulosDownloader
 
     def full_path
       
+    end
+
+
+    def safe_file_name(file_name)
+      return file_name.gsub(/[^\w\.\-\ ]/, '')
     end
 
   end

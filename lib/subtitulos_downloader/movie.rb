@@ -10,19 +10,19 @@ module SubtitulosDownloader
 
       @subtitles = []
 
+    end
+
+    def full_name
+      "#{@name} (#{@year})"
+    end
+
+    def self.new_from_file_name(file_name, options = {})
+      nil
+    end
+
+    def full_path
+      "#{ safe_file_name @name}/#{ safe_file_name self.full_name}"
+    end
+
   end
-
-  def full_name
-    "#{@name} (#{@year})"
-  end
-
-  def self.new_from_file_name(file_name, options = {})
-
-  end
-
-  def full_path
-    "#{@name}/#{self.full_name}"
-  end
-
-
 end

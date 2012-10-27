@@ -48,6 +48,7 @@ describe SubtitulosDownloader::SubtitulosDownloader do
     it 'should save the subtitles to disk' do
       sub_downloader = SubtitulosDownloader::SubtitulosDownloader.new
       episode = sub_downloader.fetch('Fringe', 4, 7)
+      FileUtils.rm_rf('/tmp/' + episode.show_path ) if Dir.exists?('/tmp/' + episode.show_path )
       sub_downloader.save_subs_to_path(episode, '/tmp')
       episode.subtitles.each do |sub|
         exists = File.exists?('/tmp/' + sub.save_path)

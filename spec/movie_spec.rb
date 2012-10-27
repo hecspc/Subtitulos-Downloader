@@ -5,10 +5,10 @@ describe SubtitulosDownloader::Movie do
 
   context "Initializing" do
 
-    it 'should create a new show episode from show, season and episode' do
-      episode = SubtitulosDownloader::Movie.new('Star Wars', 1977)
-      episode.name.should == 'Star Wars' 
-      episode.year.should == 1977
+    it 'should create a new movie from a name and a year' do
+      movie = SubtitulosDownloader::Movie.new('Star Wars', 1977)
+      movie.name.should == 'Star Wars' 
+      movie.year.should == 1977
     end
 
     # it 'should create a new show episode from a file name' do

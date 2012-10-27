@@ -52,15 +52,15 @@ module SubtitulosDownloader
     end
 
     def show_path
-      "#{@name}"
+      safe_file_name "#{@name}"
     end
 
     def season_path
-      "#{@name}/Season #{@season}"
+      "#{self.show_path}/Season #{@season}"
     end
 
     def full_path
-      "#{self.season_path}/#{self.full_name}"
+      "#{self.season_path}/#{safe_file_name self.full_name}"
     end
 
     def episode_path
@@ -101,6 +101,7 @@ module SubtitulosDownloader
       end
       
     end
+
 
   end
 
