@@ -32,7 +32,7 @@ module SubtitulosDownloader
 
       begin
         subs = get_subtitles(lang, episode_subs_table, show_sub)
-        subtitle = Subtitle.new subs, language, show_episode
+        subtitle = Subtitle.new subs, language, show_episode, @direct_link, @provider_link, @provider_name, @provider_language
       rescue SDException => e
         if language == 'es'
           if lang == 'España' 
@@ -56,6 +56,7 @@ module SubtitulosDownloader
     protected
 
     def get_subtitles(language, episode_table, show_sub)
+      @provider_link = (episode_table/"td.NewsTitle/a").first.attributes['href']
       (episode_table/"tr/td.language").each do |lang|
         language_sub = lang.inner_html.strip.force_encoding('utf-8')
         if language_sub =~ /#{language}/i
@@ -65,6 +66,9 @@ module SubtitulosDownloader
               subtitle_a = lang.parent.search("a").at(0)
               subtitle_url = subtitle_a.attributes['href']
               # puts "Fetching #{language} subtitle file"
+              @provider_language = language_sub
+              @direct_link = subtitle_url
+              # @provider_link = "#{@base_uri}/show/#{show_sub[:id_show]}"
               open(subtitle_url, 
                 "User-Agent" => @user_agent,
                 "Referer" => "#{@base_uri}/show/#{show_sub[:id_show]}") { |f|
@@ -83,15 +87,27 @@ module SubtitulosDownloader
 
     def search_show show_episode
       shows = []
+      old_name = show_episode.show_name
+      show_episode.show_name = 'Louie' if show_episode.show_name == 'Louie (2010)'
+      show_episode.show_name = 'Castle' if show_episode.show_name == 'Castle (2009)'
+      show_episode.show_name = 'The Newsroom' if show_episode.show_name == 'The Newsroom (2012)'
+      show_episode.show_name = 'The Office' if show_episode.show_name == 'The Office (US)' or show_episode.show_name == 'The Office (1995)'
+      show_episode.show_name = 'Spartacus: Blood and Sand' if show_episode.show_name =~ /Spartacus/i	
       @shows_doc.search("a").each do |show_subs|
         show_name = show_subs.inner_html.force_encoding('utf-8')
         show_url = show_subs.attributes['href']
-        if show_name =~ /#{show_episode.show_name}/i
-          shows << { :show_episode => show_episode, :url => show_url, :id_show => show_url.split('/show/')[1].to_i }
+        show = { :show_episode => show_episode, :url => show_url, :id_show => show_url.split('/show/')[1].to_i }
+        if (show_name == show_episode.show_name)
+          shows << show
+          break
+        elsif show_name =~ /^#{show_episode.show_name}/i and (show_name != 'Scrubs Interns' and show_name != 'true blood minisodes')
+          shows << show
         end
       end
       raise ShowNotFound, "[#{@provider_name}] #{show_episode.show_name} not found" if shows.count == 0
       raise MoreThanOneShow, "[#{@provider_name}] Found #{shows.count} for #{show_episode.show_name}" if shows.count > 1
+      old_name = 'The Office (US)' if old_name == 'The Office (1995)'
+      show_episode.show_name = old_name
       shows
     end
 
@@ -104,7 +120,7 @@ module SubtitulosDownloader
         "Referer" =>"#{@base_uri}" ) { |f|
           
           cont = f.read
-          raise SeasonNotFound, "[#{@provider_name}] Season for #{show_episode.full_name} not found" if cont == ''
+          raise SeasonNotFound, "[#{@provider_name}] Season for #{show_episode.full_name} not found" if not cont.match(/<table/)
 
           season_doc = Hpricot(cont)
 

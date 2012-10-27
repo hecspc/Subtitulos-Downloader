@@ -2,15 +2,14 @@ require 'tvdb'
 
 module SubtitulosDownloader
 
-  class ShowEpisode < Video
+  class ShowEpisode
 
     attr_accessor :show_name, :season, :episode, :episode_name
-    
+    attr_accessor :tvdb_episode, :tvdb_show, :subtitles
 
     def initialize(show_name, season, episode, options = {})
       
-      @name = show_name
-      @show_name = @name
+      @show_name = show_name
       @season = season.to_i
       @episode = episode.to_i
       @options = options
@@ -26,7 +25,7 @@ module SubtitulosDownloader
       tvdb_show = @tvdb.search(@show_name)
       if tvdb_show.count > 0
         tvdb_show = tvdb_show[0]
-        @name = tvdb_show.seriesname
+        @show_name = tvdb_show.seriesname
         tvdb_show.episodes.each do |ep|
           ep_number = ep.episodenumber
           ep_season = ep.combined_season
@@ -36,35 +35,40 @@ module SubtitulosDownloader
           end
         end
       else
-        raise ShowNotFound, "[TVdb] show #{@name} not found"
+        raise ShowNotFound, "[TVdb] show #{@show_name} not found"
       end
     end
 
-    
+    def subtitle_language(lang)
+      subs = nil
+      @subtitles.each do |sub|
+        if sub.language == lang
+          return sub
+          break
+        end
+      end
+      return nil
+    end
 
     def full_name
       episode_str = "%02d" % @episode
       if @episode_name
-        "#{@name} - #{@season}x#{episode_str} - #{@episode_name}"
+        "#{@show_name} - #{@season}x#{episode_str} - #{@episode_name}"
       else
-        "#{@name} - #{@season}x#{episode_str}"
+        "#{@show_name} - #{@season}x#{episode_str}"
       end
     end
 
     def show_path
-      safe_file_name "#{@name}"
+      "#{@show_name}"
     end
 
     def season_path
-      "#{self.show_path}/Season #{@season}"
-    end
-
-    def full_path
-      "#{self.season_path}/#{safe_file_name self.full_name}"
+      "#{@show_name}/Season #{@season}"
     end
 
     def episode_path
-      self.full_path
+      "#{@show_name}/Season #{@season}/#{self.full_name}"
     end
 
     def self.new_from_file_name(file_name, options={})
@@ -101,7 +105,6 @@ module SubtitulosDownloader
       end
       
     end
-
 
   end
 
