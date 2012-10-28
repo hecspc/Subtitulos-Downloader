@@ -21,7 +21,10 @@ Gem::Specification.new do |s|
   # specify any dependencies here; for example:
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec", "~>2.0"
+  s.add_development_dependency "awesome_print", ">= 1.1.0"
   # s.add_runtime_dependency "rest-client"
   s.add_dependency("tvdb", ">= 0.1.0")
+  s.add_dependency("nokogiri", ">= 1.5.5")
   s.add_dependency("hpricot", ">= 0.8.4")
+  s.add_dependency("ensure-encoding")
 end
