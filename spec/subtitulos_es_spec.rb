@@ -16,7 +16,7 @@ describe SubtitulosDownloader::SubtitulosEs do
 
     it 'should fetch number of translators' do
       subtitle = @provider.fetch(@breaking_bad, 'es')
-      subtitle.translators.should == 30
+      subtitle.translators.should == 31
     end
 
     it 'should fetch -1 for translators' do
