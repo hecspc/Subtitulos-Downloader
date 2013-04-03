@@ -63,6 +63,10 @@ module SubtitulosDownloader
       ep_doc = Nokogiri::HTML(open(@provider_link,
         "User-Agent" => @user_agent,
         "Referer" => "#{@base_uri}/show/#{show_sub[:id_show]}" ), nil, 'UTF-8')
+      if not ep_doc
+        @translators = -1 
+        return @translators
+      end
       ep_doc.encoding = 'utf-8'
       split = @direct_link.split('/')
       sub_id = [split.pop, split.pop].reverse.join('/')
@@ -129,9 +133,11 @@ module SubtitulosDownloader
       old_name = show_episode.show_name
       show_episode.show_name = 'Louie' if show_episode.show_name == 'Louie (2010)'
       show_episode.show_name = 'Castle' if show_episode.show_name == 'Castle (2009)'
+      show_episode.show_name = 'Legit' if show_episode.show_name == 'Legit (2013)'
       show_episode.show_name = 'The Newsroom' if show_episode.show_name == 'The Newsroom (2012)'
       show_episode.show_name = 'The Office' if show_episode.show_name == 'The Office (US)' or show_episode.show_name == 'The Office (1995)'
       show_episode.show_name = 'Spartacus: Blood and Sand' if show_episode.show_name =~ /Spartacus/i	
+      show_episode.show_name = 'House of Cards (2013)' if show_episode.show_name == 'House of Cards (US)'
       @shows_doc.css("#contenido a").each do |show_subs|
         show_name = show_subs.text
         show_url = show_subs['href']
